@@ -1,0 +1,13 @@
+{
+    "name": "mplus/pinch",
+    "description": "A PHP library for Pinch payment gateway.",
+    "type": "library",
+	"autoload": {
+        "psr-4": {"mplus\\Pinch\\": "src/"}
+    },
+    "require": {
+        "guzzlehttp/guzzle": "^7.0@dev"
+    },
+    "license": "MIT",
+    "minimum-stability": "dev"
+}
