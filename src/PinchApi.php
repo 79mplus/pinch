@@ -5,14 +5,19 @@ namespace mplus\Pinch;
 use GuzzleHttp\Client as HttpClient;
 
 class PinchApi{
-	private $base_url;
-	private $auth_url = 'https://auth.getpinch.com.au/connect/token';
-	private $token = null;
-	private $mode;
+	public $base_url = 'https://api.getpinch.com.au/';
+	public $auth_url = 'https://auth.getpinch.com.au/connect/token';
+	public $token = null;
+	public $mode;
 	public function __construct($merchant_id = '', $secret_key = '', $mode = 'live'){
 		/*** getting the token ***/
 		$this->getToken($merchant_id, $secret_key);
 		$this->mode = $mode;
+	}
+	public function __get($name){
+		switch($name){
+			case "payment": return new Endpoint\Payment($this); break;
+		}
 	}
 	private function getToken($merchant_id, $secret_key){
 		$http_client = new HttpClient();
@@ -29,4 +34,5 @@ class PinchApi{
 		}
 		
 	}
+
 }
