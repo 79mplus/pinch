@@ -10,12 +10,28 @@ class Payment extends Endpoint
     private $api_url;
     private $http_client;
 
+    /**
+     * @param $pinch
+     */
+
     public function __construct($pinch){
         parent::__construct($pinch);
         $this->api_url = $this->pinch->base_url . $this->pinch->mode;
         $this->http_client =  new HttpClient();
     }
 
+    /**
+     * @param $publishable_key
+     * @param $card_no
+     * @param $cvc
+     * @param $expiry_month
+     * @param $expiry_year
+     * @param $card_holder_name
+     * @param $email
+     * @param $amount
+     * @param string $description
+     * @return bool
+     */
     public function execute($publishable_key, $card_no, $cvc, $expiry_month, $expiry_year, $card_holder_name, $email, $amount, $description = ''){
         /*getting credit card token*/
         // Tokens
@@ -64,6 +80,13 @@ class Payment extends Endpoint
         return false;
     }
 
+    /**
+     * @param $payer_id
+     * @param $transaction_date
+     * @param $amount
+     * @param string $description
+     * @return mixed
+     */
     public function schedule($payer_id, $transaction_date, $amount, $description = ''){
         $resp = $this->http_client->request('POST', $this->api_url. '/payments', [
             'headers' => [
