@@ -8,15 +8,16 @@ class Payment extends Endpoint
 {
     private $token;
     private $api_url;
+    private $http_client;
 
     public function __construct($pinch){
         parent::__construct($pinch);
         $this->api_url = $this->pinch->base_url . $this->pinch->mode;
+        $this->http_client =  new HttpClient();
     }
 
     public function execute($publishable_key, $card_no, $cvc, $expiry_month, $expiry_year, $card_holder_name, $email, $amount, $description = ''){
         /*getting credit card token*/
-        $http_client                  = new HttpClient();
         // Tokens
         $token_body = array(
             'PublishableKey' => $publishable_key,
@@ -28,7 +29,7 @@ class Payment extends Endpoint
         );
         $token_body_json              = json_encode( (object) $token_body );
 
-        $resp = $http_client->request('POST', $this->api_url . '/tokens', [
+        $resp = $this->http_client->request('POST', $this->api_url . '/tokens', [
             'headers' => [
                 'Content-Type' => 'application/json',
             ],
@@ -43,7 +44,7 @@ class Payment extends Endpoint
         }
 
         if( $this->token ){
-            $resp = $http_client->request('POST', $this->api_url. '/payments/realtime', [
+            $resp = $this->http_client->request('POST', $this->api_url. '/payments/realtime', [
                 'headers' => [
                     'Content-Type'  => 'application/json',
                     'Authorization' => 'Bearer ' . $this->pinch->token
@@ -61,6 +62,23 @@ class Payment extends Endpoint
         }
 
         return false;
+    }
+
+    public function schedule($payer_id, $transaction_date, $amount, $description = ''){
+        $resp = $this->http_client->request('POST', $this->api_url. '/payments', [
+            'headers' => [
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . $this->pinch->token
+            ],
+            'body' => "{
+                    'payerId'       : '{$payer_id}',
+                    'amount'         : {$amount},
+                    'transactionDate': '{$transaction_date}'
+                    'description'    : '{$description}',
+                }"
+        ]);
+
+        return $resp->getBody()->getContents();
     }
 
 }
