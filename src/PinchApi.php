@@ -17,6 +17,7 @@ class PinchApi{
 	public function __get($name){
 		switch($name){
 			case "payment": return new Endpoint\Payment($this); break;
+			case "payer": return new Endpoint\Payer($this); break;
 		}
 	}
 	private function getToken($merchant_id, $secret_key){
