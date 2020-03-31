@@ -7,6 +7,13 @@ use GuzzleHttp\Client as HttpClient;
 class Payment extends Endpoint
 {
     private $token;
+    private $api_url;
+
+    public function __construct($pinch){
+        parent::__construct($pinch);
+        $this->api_url = $this->pinch->base_url . $this->pinch->mode;
+    }
+
     public function execute($publishable_key, $card_no, $cvc, $expiry_month, $expiry_year, $card_holder_name, $email, $amount, $description = ''){
         /*getting credit card token*/
         $http_client                  = new HttpClient();
@@ -21,7 +28,7 @@ class Payment extends Endpoint
         );
         $token_body_json              = json_encode( (object) $token_body );
 
-        $resp = $http_client->request('POST', $this->pinch->base_url . $this->pinch->mode . '/tokens', [
+        $resp = $http_client->request('POST', $this->api_url . '/tokens', [
             'headers' => [
                 'Content-Type' => 'application/json',
             ],
@@ -36,7 +43,7 @@ class Payment extends Endpoint
         }
 
         if( $this->token ){
-            $resp = $http_client->request('POST', $this->pinch->base_url . $this->pinch->mode . '/payments/realtime', [
+            $resp = $http_client->request('POST', $this->api_url. '/payments/realtime', [
                 'headers' => [
                     'Content-Type'  => 'application/json',
                     'Authorization' => 'Bearer ' . $this->pinch->token
