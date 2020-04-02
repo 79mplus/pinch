@@ -43,4 +43,10 @@ $client->payer->update($id, $email, $first_name, $last_name, $mobile);
 ```
 $last_name and $mobile are optional.
 
+### Save a payment source
+```
+$client->payer->save_payment_source( $payer_id, $source_type, $credit_card_token, $bank_account_name, $bank_account_bsb, $bank_account_number);
+```
+last 3 parameters are optional.
+
 
